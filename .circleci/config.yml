@@ -210,10 +210,13 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-      - image: cimg/node:13.8.0
+          fingerprints: ["6e:74:01:dc:cd:9f:b3:c6:e4:b6:bf:7c:da:d1:60:9f"]
       - run:
           name: Install dependencies
-      - awscli
+          command: |
+            apk add --update --no-cache tar gzip ansible aws-cli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
@@ -233,6 +236,36 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
       - persist_to_workspace:
           root: ~/
+          paths:
+            - project/backend/.env
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
+
+  run-migrations:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - awscli
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt
+      - run:
+          name: Send migration results to kvdb.io
+          command: |
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+                 curl https://kvdb.io/LyfGpM2N72rb1hz1ZFJSiV/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            fi
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}       
+
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -325,93 +358,8 @@ jobs:
 
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
-          command: |
-            yum update -y && yum install -y sudo
-            sudo yum install -y gcc-c++ make
-            curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
-            sudo yum install nodejs -y
-            yum install tar -y
-            yum install gzip -y
-            # Use n version manager to use Node.js v13.8.0
-            sudo npm install --global n
-            sudo n 13.8.0
-       - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys: [frontend-build]
-      - run:
-          name: Get backend url
-          command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
-      - run:
-          name: Deploy frontend objects
-          command: |
-            cd frontend
-            npm install
-            npm audit fix --audit-level=critical --force
-            npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}    
-                    
-  deploy-backend:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - awscli
-      - ansible
-      - nodejs
-      - add_ssh_keys:
-          fingerprints: ["6e:74:01:dc:cd:9f:b3:c6:e4:b6:bf:7c:da:d1:60:9f"]
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Install dependencies
-          command: |
-            cd backend
-            npm install
-            npm run build
-            cd ..
-      - run:
-      # - build-frontend
-      # - build-backend
-            tar -C backend -czvf artifact.tar.gz .
-            cp artifact.tar.gz  ~/
-      - run:
-          name: Checking the existence of inventory.txt && artifact.tar.gz file
-          command: |
-            cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
-            cat inventory.txt
-      - deploy-infrastructure
-          # requires: [build-frontend, build-backend]
-      - run:
-          name: Deploy backend
-          command: |
-            cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
+#   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
 #     steps:
