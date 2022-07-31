@@ -213,7 +213,7 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - awscli
+      - aws-cli
       - restore_cache:
           keys: [backend-build]
       - run:
