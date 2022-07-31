@@ -187,7 +187,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["6e:74:01:dc:cd:9f:b3:c6:e4:b6:bf:7c:da:d1:60:9f"]
+          fingerprints: ["56:6c:47:55:16:9e:fc:45:ab:73:e0:14:bc:3f:33:00:8f:a4:00:7a"]
 
       - run:
           name: Install dependencies
@@ -298,7 +298,7 @@ jobs:
       - ansible
       - nodejs
       - add_ssh_keys:
-          fingerprints: ["6e:74:01:dc:cd:9f:b3:c6:e4:b6:bf:7c:da:d1:60:9f"]
+          fingerprints: ["56:6c:47:55:16:9e:fc:45:ab:73:e0:14:bc:3f:33:00:8f:a4:00:7a"]
 
       - attach_workspace:
           at: ~/
