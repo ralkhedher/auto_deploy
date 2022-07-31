@@ -210,7 +210,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - run:
