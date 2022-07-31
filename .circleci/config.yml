@@ -213,7 +213,10 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - aws-cli
+      - run:
+          name: Install deps
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm curl aws-cli 
       - restore_cache:
           keys: [backend-build]
       - run:
