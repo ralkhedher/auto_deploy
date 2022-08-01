@@ -259,7 +259,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
 
-    configure-infrastructure:
+  configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
