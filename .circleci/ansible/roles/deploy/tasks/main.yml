@@ -1,26 +1,29 @@
 ---
-- name: "Creates directory for backend"
+- name: "Creates backend app directory"
   file:
-    path: ~/backend
+    path: ~/backend-app
     state: directory
 
-- name: copy archived file into remote server
-  copy:
-    src: ~/artifact.tar.gz
-    dest: /home/ubuntu/backend/artifact.tar.gz
-    mode: "0777"
-    backup: yes
+- name: "Unarchive backend files"
+  unarchive:
+    src: artifact.tar.gz
+    dest: ~/backend-app
 
 - name: "Installing Node Dependencies"
   shell: |
-    cd ~/backend
-    tar -xvzf artifact.tar.gz
-    npm install -f
+    cd ~/backend-app
+    npm i
 - name: "Executing Node app with PM2"
   shell: |
-    cd ~/backend
-    pm2 start npm -- start -f
-    pm2 list
+    cd ~/backend-app/dist
+    cd ../
+    npm install
+    
+    npm run build
+    sudo npm install forever -g
+    sudo npm install ts-node -g
+    forever start -c "ts-node -r tsconfig-paths/register -r dotenv/config src/main.ts" ./
+    
   register: execute_node
 
 - name: print message
@@ -28,6 +31,6 @@
     msg: "{{ execute_node.stdout_lines }}"
 
 - name: "Configure pm2 to start as service"
+  become: true
   shell: |
-    sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
-    pm2 save
+    env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
