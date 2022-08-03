@@ -1,16 +1,15 @@
 A public git repository with your project code. [URL01]
-https://github.com/ralkhedher/auto_deploy
-
+https://github.com/ralkhedher/auto_deploy or https://github.com/ralkhedher/auto_deploy/blob/master/URL01.png
 
 Evidence of deployed and functioning front-end application in an S3 bucket [URL02].
-http://udapeople-9203ee1.s3-website.us-east-1.amazonaws.com/#/employees
+http://udapeople-9203ee1.s3-website.us-east-1.amazonaws.com/#/employees or https://github.com/ralkhedher/auto_deploy/blob/master/URL02.png
 
 Evidence of deployed and functioning front-end application in CloudFront. [URL03_SCREENSHOT]
-https://d3ho21py4cbhma.cloudfront.net
+https://d3ho21py4cbhma.cloudfront.net or https://github.com/ralkhedher/auto_deploy/blob/master/URL03_SCREENSHOT.png
 
 Evidence of healthy back-end application. [URL04_SCREENSHOT]
-http://54.87.122.92:3030/api/status 
+http://54.87.122.92:3030/api/status or https://github.com/ralkhedher/auto_deploy/blob/master/URL04_SCREENSHOT.png
 
 
 Evidence of Prometheus Server. [URL05]
-http://ec2-54-152-36-35.compute-1.amazonaws.com:9090/targets
+http://ec2-54-152-36-35.compute-1.amazonaws.com:9090/targets or https://github.com/ralkhedher/auto_deploy/blob/master/URL05_SCREENSHOT.png
