@@ -8,8 +8,8 @@ Evidence of deployed and functioning front-end application in CloudFront. [URL03
 https://d3ho21py4cbhma.cloudfront.net or https://github.com/ralkhedher/auto_deploy/blob/master/URL03_SCREENSHOT.png
 
 Evidence of healthy back-end application. [URL04_SCREENSHOT]
-http://54.87.122.92:3030/api/status or https://github.com/ralkhedher/auto_deploy/blob/master/URL04_SCREENSHOT.png
+https://github.com/ralkhedher/auto_deploy/blob/master/URL04_SCREENSHOT.png
 
 
 Evidence of Prometheus Server. [URL05]
-http://ec2-54-152-36-35.compute-1.amazonaws.com:9090/targets or https://github.com/ralkhedher/auto_deploy/blob/master/URL05_SCREENSHOT.png
+https://github.com/ralkhedher/auto_deploy/blob/master/URL05_SCREENSHOT.png
